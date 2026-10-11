@@ -11,7 +11,6 @@ interface Props {
   /** Path to the social sharing image, relative to site root. */
   image?: string;
   imageAlt?: string;
-  accent?: 'teal' | 'ochre' | 'plum' | 'terracotta' | 'moss';
   type?: 'website' | 'article';
   /** JSON-LD object to embed. */
   schema?: Record<string, unknown>;
@@ -23,7 +22,6 @@ const {
   path,
   image = '/og/default.png',
   imageAlt = `${site.name} — ${site.tagline}`,
-  accent,
   type = 'website',
   schema,
 } = Astro.props;
@@ -33,7 +31,7 @@ const imageUrl = new URL(image, site.url).href;
 const fullTitle = path === '/' ? `${site.name} — ${site.tagline}` : `${title} — ${site.name}`;
 ---
 <!doctype html>
-<html lang="en-GB" data-accent={accent}>
+<html lang="en-GB">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -41,7 +39,7 @@ const fullTitle = path === '/' ? `${site.name} — ${site.tagline}` : `${title} 
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="author" content={site.author.name} />
-    <meta name="theme-color" content="#f3ede2" />
+    <meta name="theme-color" content="#f5f3ee" />
     <meta name="color-scheme" content="light" />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -50,7 +48,8 @@ const fullTitle = path === '/' ? `${site.name} — ${site.tagline}` : `${title} 
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" href="/sitemap-index.xml" />
 
-    <link rel="preload" href="/fonts/fraunces-soft.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/fraunces-italic.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin />
 
     <meta property="og:type" content={type} />

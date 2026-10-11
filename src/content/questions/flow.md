@@ -2,7 +2,6 @@
 number: 1
 category: Flow
 question: Where does work actually wait?
-accent: teal
 summary: Improving individual productivity does not necessarily improve the overall flow of value. Follow one piece of work from request to outcome and notice where it waited.
 coreIdea: Improving individual productivity does not necessarily improve the overall flow of value.
 opening:

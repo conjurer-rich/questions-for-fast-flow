@@ -11,6 +11,8 @@ export const site = {
     'Sometimes the most useful thing we can do is challenge the question we’re asking. Five questions about how organisations work, how value flows, and what might be getting in the way.',
   /** Shown on cards and pages as a reference to the physical set. */
   collectionLabel: 'One of five better questions.',
+  /** Masthead provenance line. Change when a new edition of cards is issued. */
+  edition: { volume: 'Vol. I', note: 'First edition · October 2026' },
   author: {
     name: 'Rich Allen',
     /** Short, factual, verified against the brief and public profiles. */
@@ -42,3 +44,6 @@ export const site = {
 } as const;
 
 export const pad = (n: number) => String(n).padStart(2, '0');
+
+/** Approximate reading time in whole minutes at ~210 words per minute. */
+export const readMinutes = (text: string) => Math.max(1, Math.round(text.trim().split(/\s+/).length / 210));

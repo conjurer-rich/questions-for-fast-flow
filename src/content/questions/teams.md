@@ -2,7 +2,6 @@
 number: 2
 category: Teams
 question: Are your teams organised around value or dependencies?
-accent: ochre
 summary: Team boundaries often reflect historical structures, reporting lines or technology rather than how user needs are met. Pick one important need and count the teams that must coordinate to meet it.
 coreIdea: Team boundaries often reflect historical structures, reporting relationships or technology rather than how user needs are met.
 opening:

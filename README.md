@@ -156,4 +156,4 @@ Everything works without JavaScript. The only client-side scripts are the share/
 
 ## Fonts
 
-Fraunces (soft axis, latin subset) and Inter (latin subset), both under the SIL Open Font License, self-hosted from `public/fonts` with licences alongside. Sourced from the `@fontsource-variable` packages.
+Fraunces (optical-size axis, latin subset, roman and italic) and Inter (latin subset), both under the SIL Open Font License, self-hosted from `public/fonts` with licences alongside. Sourced from the `@fontsource-variable` packages.

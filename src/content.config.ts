@@ -19,8 +19,6 @@ const questions = defineCollection({
     category: z.string().min(1).max(24),
     /** The question itself. Keep it to one sentence. */
     question: z.string().min(8),
-    /** One of the named accent tokens in global.css. */
-    accent: z.enum(['teal', 'ochre', 'plum', 'terracotta', 'moss']),
     /** 1–2 sentence summary used for <meta description> and social cards. */
     summary: z.string().min(40).max(220),
     /** The core idea in one sentence — shown as a standfirst on the page and on the homepage index. */

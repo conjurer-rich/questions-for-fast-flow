@@ -2,7 +2,6 @@
 number: 5
 category: Decisions
 question: What evidence would justify changing your teams?
-accent: moss
 summary: Organisational change should be treated as a hypothesis informed by evidence, not the adoption of a fashionable target structure. Before changing a boundary, say what you observed and how you will know it helped.
 coreIdea: Organisational changes should be treated as hypotheses informed by evidence, rather than automatically adopting a fashionable target structure.
 opening:

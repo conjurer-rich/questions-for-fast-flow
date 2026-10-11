@@ -2,7 +2,6 @@
 number: 3
 category: AI
 question: What happens when AI makes the wrong work faster?
-accent: plum
 summary: AI can accelerate individual activities without improving end-to-end delivery, and may increase pressure on downstream constraints. Ask what your next constraint would be if implementation time halved tomorrow.
 coreIdea: AI may accelerate individual activities without improving end-to-end delivery, potentially increasing pressure on downstream constraints.
 opening:

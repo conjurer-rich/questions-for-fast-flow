@@ -2,7 +2,6 @@
 number: 4
 category: Users
 question: Could you explain why every team exists?
-accent: terracotta
 summary: Teams are often described by the systems they operate or the activities they perform rather than the user needs they help meet. Choose a team and trace the line from its responsibilities to a user.
 coreIdea: Teams are often described in terms of the systems they operate or the activities they perform, rather than the user needs they help meet.
 opening:

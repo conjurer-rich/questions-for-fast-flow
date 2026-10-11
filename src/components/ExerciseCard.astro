@@ -1,70 +1,32 @@
 ---
 /**
- * The practical exercise, presented as a card the reader could tear out.
- * A dashed inner border and the "Try this" label echo the printed set.
+ * The practical exercise. The prompt is rendered as a card object (the
+ * same white card as the physical set), with the working notes beneath it.
  */
-interface Props { prompt: string; notes: string[]; number: string }
-const { prompt, notes, number } = Astro.props;
+import { site } from '@/lib/site';
+interface Props { prompt: string; notes: string[]; number: string; category: string }
+const { prompt, notes, number, category } = Astro.props;
 ---
 <aside class="exercise" aria-labelledby="exercise-heading">
-  <div class="exercise__card">
-    <p class="exercise__label eyebrow" id="exercise-heading"><span class="num">Try this</span></p>
-    <p class="exercise__prompt serif">“{prompt}”</p>
-    {notes.length > 0 && (
-      <ol class="exercise__notes">
-        {notes.map((n) => <li>{n}</li>)}
-      </ol>
-    )}
-    <span class="exercise__corner" aria-hidden="true">{number}</span>
+  <p class="meta" id="exercise-heading"><span class="accent">Try this</span><span class="sep" aria-hidden="true">·</span>A practical exercise</p>
+  <div class="card card--tall exercise__card">
+    <span class="card__meta"><span><span class="num">No. {number}</span></span><span>{category}</span></span>
+    <span class="card__q">{prompt}</span>
+    <span class="card__brand">{site.name} <span aria-hidden="true">×</span><span class="visually-hidden">by</span> {site.author.name}</span>
   </div>
+  {notes.length > 0 && (
+    <ol class="exercise__notes">
+      {notes.map((n) => <li>{n}</li>)}
+    </ol>
+  )}
 </aside>
 
 <style>
-  .exercise { margin-block: var(--space-5); }
-  .exercise__card {
-    position: relative;
-    background: var(--surface);
-    border: 1px solid var(--rule);
-    border-radius: var(--radius-lg);
-    padding: var(--space-3);
-    box-shadow: var(--shadow-card);
-    overflow: hidden;
-  }
-  .exercise__card::before {
-    content: ''; position: absolute; inset: 8px;
-    border: 1px dashed color-mix(in oklab, var(--accent) 55%, var(--rule));
-    border-radius: calc(var(--radius-lg) - 6px);
-    pointer-events: none;
-  }
-  .exercise__card::after {
-    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--accent);
-  }
-  .exercise__label { margin-bottom: var(--space-2); }
-  .exercise__prompt {
-    font-size: var(--step-2);
-    line-height: 1.25;
-    letter-spacing: -0.01em;
-    text-wrap: balance;
-    color: var(--ink);
-    max-width: 30ch;
-  }
+  .exercise { margin-block: var(--space-5); display: grid; gap: var(--space-3); max-width: var(--measure); }
+  .exercise__card .card__q { font-size: clamp(1.1rem, 0.7rem + 2.2vw, 1.55rem); max-width: 26ch; }
   .exercise__notes {
-    margin-top: var(--space-3);
-    padding-left: 1.4em;
-    color: var(--ink-2);
-    font-size: var(--step--1);
-    line-height: 1.6;
-    max-width: var(--measure);
+    padding-left: 1.5em; color: var(--ink-2); font-size: var(--step-0); line-height: 1.5; text-wrap: pretty;
   }
-  .exercise__notes li + li { margin-top: 0.6em; }
-  .exercise__notes li::marker { color: var(--accent); font-weight: 600; font-feature-settings: 'tnum'; }
-  .exercise__corner {
-    position: absolute; right: var(--space-3); top: var(--space-3);
-    font-family: var(--serif); font-size: var(--step-2); font-weight: 300;
-    color: var(--accent); opacity: 0.45; line-height: 1; font-feature-settings: 'tnum';
-  }
-  .exercise__label { padding-right: 3rem; }
-  @media (min-width: 720px) {
-    .exercise__card { padding: var(--space-4); }
-  }
+  .exercise__notes li + li { margin-top: 0.7em; }
+  .exercise__notes li::marker { color: var(--accent); font-family: var(--sans); font-weight: 600; font-size: 0.85em; }
 </style>

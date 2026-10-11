@@ -1,52 +1,45 @@
 ---
 /**
- * The five-question index shown in the header of each question page.
- * Each mark is a link, so it doubles as navigation. The current question is
- * filled; others are outlined. Works without JavaScript.
+ * The question index as a row of tracked numbers, 01 to 05. Each is a link;
+ * the current one is underlined in oxblood. Works without JavaScript.
  */
 import { pad } from '@/lib/site';
 import type { Question } from '@/lib/questions';
-interface Props { questions: Question[]; currentId: string }
-const { questions, currentId } = Astro.props;
+interface Props { questions: Question[]; currentId?: string; labels?: boolean }
+const { questions, currentId, labels = false } = Astro.props;
 ---
-<nav class="progress" aria-label="Questions in this collection">
-  <ol role="list" class="progress__list">
-    {questions.map((q) => {
-      const isCurrent = q.id === currentId;
-      return (
-        <li data-accent={q.data.accent}>
-          <a
-            href={`/${q.id}`}
-            class:list={['progress__dot', { 'is-current': isCurrent }]}
-            aria-current={isCurrent ? 'page' : undefined}
-            aria-label={`Question ${pad(q.data.number)}, ${q.data.category}: ${q.data.question}`}
-            title={`${pad(q.data.number)} — ${q.data.category}`}
-          >
-            <span class="progress__num" aria-hidden="true">{pad(q.data.number)}</span>
-          </a>
-        </li>
-      );
-    })}
-  </ol>
-</nav>
+<ol role="list" class:list={['progress', { 'progress--labels': labels }]}>
+  {questions.map((q) => {
+    const isCurrent = q.id === currentId;
+    return (
+      <li>
+        <a
+          href={`/${q.id}`}
+          class:list={['progress__item', 'meta', { 'is-current': isCurrent }]}
+          aria-current={isCurrent ? 'page' : undefined}
+          aria-label={`Question ${pad(q.data.number)}, ${q.data.category}: ${q.data.question}`}
+        >
+          <span class="progress__num">{pad(q.data.number)}</span>
+          {labels && <span class="progress__label"> {q.data.category}</span>}
+        </a>
+      </li>
+    );
+  })}
+</ol>
 
 <style>
-  .progress__list { display: flex; gap: 0.4rem; }
-  .progress__dot {
-    display: grid; place-items: center;
-    width: 2rem; height: 2rem;
-    border-radius: 999px;
-    border: 1px solid var(--rule-strong);
-    color: var(--ink-3);
-    text-decoration: none;
-    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.02em;
-    font-feature-settings: 'tnum';
-    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease), transform var(--dur) var(--ease);
+  .progress { display: flex; gap: 0; }
+  .progress__item {
+    display: inline-block; padding: 0.45rem 0.55rem; text-decoration: none; color: var(--ink-3);
+    border-bottom: 2px solid transparent; transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
   }
-  .progress__dot:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
-  .progress__dot.is-current { background: var(--accent); border-color: var(--accent); color: var(--paper); }
-  @media (max-width: 420px) {
-    .progress__dot { width: 1.75rem; height: 1.75rem; font-size: 0.62rem; }
-    .progress__list { gap: 0.3rem; }
-  }
+  .progress__item:hover { color: var(--ink); }
+  .progress__item.is-current { color: var(--accent); border-bottom-color: var(--accent); }
+  .progress__item .progress__num { font-weight: 600; }
+  .progress--labels { flex-wrap: wrap; justify-content: center; }
+  .progress--labels .progress__item { padding: 0.45rem 0.9rem; color: var(--ink); }
+  .progress--labels .progress__item .progress__num { color: var(--accent); }
+  .progress--labels li { display: inline-flex; align-items: center; }
+  .progress--labels li + li::before { content: '·'; color: var(--ink-3); margin-inline: 0.15rem 0.05rem; font-family: var(--sans); }
+  @media (max-width: 400px) { .progress__item { padding-inline: 0.4rem; } }
 </style>

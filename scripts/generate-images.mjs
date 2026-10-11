@@ -16,7 +16,6 @@ const contentDir = resolve(root, 'src/content/questions');
 const outDir = resolve(root, 'public/og');
 mkdirSync(outDir, { recursive: true });
 
-const ACCENTS = { teal: '#1f5f6b', ochre: '#8a5a14', plum: '#5b4b8a', terracotta: '#a3391f', moss: '#3c6b45' };
 const pad = (n) => String(n).padStart(2, '0');
 
 // Minimal frontmatter reader: enough for the scalar fields we need.
@@ -37,30 +36,56 @@ const questions = readdirSync(contentDir)
   .sort((a, b) => Number(a.number) - Number(b.number));
 
 const fontCss = `
-  @font-face { font-family: 'Fraunces'; font-weight: 100 900; src: url('file://${root}/public/fonts/fraunces-soft.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-weight: 100 900; src: url('file://${root}/public/fonts/fraunces.woff2') format('woff2-variations'); }
   @font-face { font-family: 'Fraunces'; font-style: italic; font-weight: 100 900; src: url('file://${root}/public/fonts/fraunces-italic.woff2') format('woff2-variations'); }
   @font-face { font-family: 'Inter'; font-weight: 100 900; src: url('file://${root}/public/fonts/inter.woff2') format('woff2-variations'); }
 `;
-
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const base = `${fontCss}
+  html,body{margin:0;width:1200px;height:630px;background:#f5f3ee;color:#141311;font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased}
+  .meta{font-size:22px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;color:#6b675f}
+  .meta b{color:#7f1d1d}
+`;
 
-function card({ eyebrow, title, footer, accent, big = false }) {
-  return `<!doctype html><html><head><meta charset="utf-8"><style>
-    ${fontCss}
-    html,body{margin:0;width:1200px;height:630px;background:#f3ede2;color:#1b1915;font-family:Inter,sans-serif}
-    .c{position:relative;width:1200px;height:630px;padding:72px 84px 64px 100px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between}
-    .spine{position:absolute;left:0;top:0;bottom:0;width:22px;background:${accent}}
-    .eyebrow{font-size:28px;letter-spacing:.1em;text-transform:uppercase;color:#6e675c;font-weight:500}
-    .eyebrow b{color:${accent};font-weight:600}
-    .title{font-family:Fraunces,serif;font-variation-settings:'SOFT' 60;font-weight:400;font-size:${big ? 132 : 84}px;line-height:1.02;letter-spacing:-.025em;max-width:980px;text-wrap:balance}
-    .title em{font-style:italic;font-weight:300}
-    .foot{display:flex;justify-content:space-between;align-items:baseline;font-size:28px;color:#4b463e}
-    .foot .brand{font-family:Fraunces,serif;font-variation-settings:'SOFT' 60;font-weight:500;color:#1b1915}
-    .grain{position:absolute;inset:0;opacity:.35;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.09 0 0 0 0 0.07 0 0 0 0.08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");pointer-events:none}
-  </style></head><body><div class="c"><div class="grain"></div><div class="spine"></div>
-    <div class="eyebrow">${eyebrow}</div>
-    <div class="title">${title}</div>
-    <div class="foot"><span class="brand">Better questions</span><span>${footer}</span></div>
+// Homepage image: the masthead.
+function masthead() {
+  return `<!doctype html><html><head><meta charset="utf-8"><style>${base}
+    .c{position:relative;width:1200px;height:630px;padding:64px 90px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between}
+    .row{display:flex;justify-content:space-between;padding-bottom:18px;border-bottom:2px solid #141311;font-size:19px;white-space:nowrap}
+    .title{font-family:Fraunces,serif;font-style:italic;font-weight:400;font-size:168px;line-height:.95;letter-spacing:-.035em;text-align:center;margin:0}
+    .tag{font-family:Fraunces,serif;font-style:italic;font-size:34px;text-align:center;color:#3d3a35;margin-top:10px}
+    .nav{display:flex;justify-content:center;gap:0 34px;padding-top:18px;border-top:2px solid #141311}
+  </style></head><body><div class="c">
+    <div class="row meta"><span>Vol. I · Five questions</span><span>First edition · October 2026</span><span>By Rich Allen</span></div>
+    <div><div class="title">Better questions</div><div class="tag">Better questions for faster flow.</div></div>
+    <div class="nav meta">${questions.map((q) => `<span><b>${pad(q.number)}</b> ${esc(q.category)}</span>`).join('')}</div>
+  </div></body></html>`;
+}
+
+// Question image: the card object on the page.
+function card(q) {
+  return `<!doctype html><html><head><meta charset="utf-8"><style>${base}
+    .c{position:relative;width:1200px;height:630px;box-sizing:border-box;display:grid;grid-template-columns:1fr auto;align-items:center;gap:70px;padding:60px 90px}
+    .card{width:560px;height:362px;background:#fff;border-radius:26px;box-shadow:0 2px 2px rgba(20,19,17,.04),0 30px 60px -30px rgba(20,19,17,.35);display:grid;grid-template-rows:auto 1fr auto;padding:34px 40px;box-sizing:border-box;text-align:center}
+    .card .meta{display:flex;justify-content:space-between;font-size:16px}
+    .card .q{align-self:center;font-weight:800;font-size:40px;line-height:1.1;text-transform:uppercase;color:#7f1d1d;letter-spacing:-.005em;text-wrap:balance;max-width:22ch;margin:0 auto}
+    .card .brand{font-size:14px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#141311}
+    .side{display:flex;flex-direction:column;gap:22px}
+    .side .title{font-family:Fraunces,serif;font-style:italic;font-size:76px;line-height:.95;letter-spacing:-.03em}
+    .side .sub{font-family:Fraunces,serif;font-style:italic;font-size:28px;color:#3d3a35}
+    .side .url{font-size:20px;letter-spacing:.06em;color:#6b675f}
+  </style></head><body><div class="c">
+    <div class="side">
+      <div class="meta"><b>No. ${pad(q.number)}</b> · ${esc(q.category)}</div>
+      <div class="title">Better questions</div>
+      <div class="sub">One of ${questions.length} better questions.</div>
+      <div class="url">questions.richallen.info/${q.slug}</div>
+    </div>
+    <div class="card">
+      <div class="meta"><span><b>No. ${pad(q.number)}</b></span><span>${esc(q.category)}</span></div>
+      <div class="q">${esc(q.question)}</div>
+      <div class="brand">Better questions × Rich Allen</div>
+    </div>
   </div></body></html>`;
 }
 
@@ -74,15 +99,9 @@ async function shot(html, file) {
   console.log('wrote', file.replace(root + '/', ''));
 }
 
-await shot(
-  card({ eyebrow: `A collection of questions by Rich Allen`, title: `Better <em>questions</em><br>for faster flow.`, footer: `questions.richallen.info`, accent: '#1b1915', big: true }),
-  resolve(outDir, 'default.png'),
-);
+await shot(masthead(), resolve(outDir, 'default.png'));
 for (const q of questions) {
-  await shot(
-    card({ eyebrow: `Question <b>${pad(q.number)}</b> &nbsp;·&nbsp; ${esc(q.category)}`, title: esc(q.question), footer: `One of ${questions.length} better questions &nbsp;·&nbsp; questions.richallen.info/${q.slug}`, accent: ACCENTS[q.accent] }),
-    resolve(outDir, `${q.slug}.png`),
-  );
+  await shot(card(q), resolve(outDir, `${q.slug}.png`));
 }
 
 // Icons from favicon.svg
@@ -90,7 +109,7 @@ const svg = readFileSync(resolve(root, 'public/favicon.svg'), 'utf8');
 const iconPage = await browser.newPage({ deviceScaleFactor: 1 });
 async function icon(size, file, transparent = false) {
   await iconPage.setViewportSize({ width: size, height: size });
-  await iconPage.setContent(`<!doctype html><style>html,body{margin:0;background:${transparent ? 'transparent' : '#f3ede2'}}svg{display:block;width:${size}px;height:${size}px}</style>${svg}`);
+  await iconPage.setContent(`<!doctype html><style>html,body{margin:0;background:${transparent ? 'transparent' : '#f5f3ee'}}svg{display:block;width:${size}px;height:${size}px}</style>${svg}`);
   const buf = await iconPage.screenshot({ path: file, type: 'png', omitBackground: transparent });
   console.log('wrote', file.replace(root + '/', ''));
   return buf;

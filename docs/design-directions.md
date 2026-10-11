@@ -56,3 +56,15 @@ The brief for all three: editorial not corporate, mobile-first (most visitors ar
 - One accent per question, used for small marks only. The site remains two-colour (paper and ink) at a glance.
 - Motion is limited to a short reveal on load, a cross-fade between pages (native CSS view transitions where supported) and hover/focus states. All of it is disabled under `prefers-reduced-motion`.
 - No images are required to render any page; the only binary assets are three font files and the social sharing images.
+
+---
+
+## Refinement after reference review
+
+Three references were supplied after the first build: a We're Not Really Strangers × Valentino conversation card (the question alone, bold uppercase sans in one deep red, centred on a white rounded card with a small brand line); the *Inkwell* journal template (a masthead with hairline rules, tracked-caps metadata rows, an italic serif display face and a serif body); and a Swiss-typography page (monochrome, numbered, confident type at scale). Direction A was refined accordingly rather than replaced:
+
+- **Palette.** The five per-question accents were set aside for near-monochrome off-white (`#F5F3EE`) and ink (`#141311`) with one oxblood accent (`#7F1D1D`, 9:1 on paper, 10:1 on white). Questions are distinguished by number and category, not colour. The per-accent version remains in git history if it is ever wanted back.
+- **Two registers.** The *card* is a white rounded object with the question set in Inter 800, uppercase, centred, in oxblood, with "No. 01 · Flow" above and "Better questions × Rich Allen" below. It appears wherever a question is offered: the homepage index, the practical exercise, "next question", the social image and print. The *journal* is everything around it: Fraunces italic for the masthead and the question headline, Fraunces roman (optical sizing on) for body text, Inter tracked caps for metadata.
+- **Masthead.** The homepage opens like a journal: a metadata row (volume, edition, author), an ink rule, the title at up to 8rem in italic, the tagline, and a question nav with middle dots between entries. Question pages carry a one-row version.
+- **Rules.** Structural rules are ink, minor rules are grey. The paper grain was removed; the references are flat.
+- **Fonts.** Fraunces switched from the soft-axis file to the optical-size file so the same family serves display and text sizes (two files, roman and italic). Inter is unchanged. Total font payload is about 197 KB.
