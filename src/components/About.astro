@@ -1,23 +1,35 @@
 ---
-/** A short, understated introduction to the person behind the questions. */
+/**
+ * A short, understated introduction to the person behind the questions.
+ * The portrait is the same headshot as richallen.info, kept small and
+ * beside the byline, as a columnist's photograph would be.
+ */
 import { site } from '@/lib/site';
 interface Props { compact?: boolean; headingLevel?: 'h2' | 'h3' }
 const { compact = false, headingLevel = 'h2' } = Astro.props;
 const Heading = headingLevel;
 const { author } = site;
+const clients = author.clients;
+const clientList = clients.length > 1 ? `${clients.slice(0, -1).join(', ')} and ${clients[clients.length - 1]}` : clients.join('');
 ---
 <section class="about" aria-labelledby="about-heading">
   <hr class="rule" />
   <div class="about__grid">
-    <p class="meta meta--muted">About the author</p>
+    <div class="about__aside">
+      <p class="meta meta--muted">About the author</p>
+      <img class="about__photo" src={author.photo.src} alt="" width="320" height="320" loading="lazy" decoding="async" />
+    </div>
     <div class="about__text">
       <Heading id="about-heading" class="about__name display">{author.name}</Heading>
       <p class="about__role meta meta--muted">{author.role}</p>
       <div class="about__bio">
         {compact ? <p>{author.bio[0]} {author.bio[1]}</p> : author.bio.map((p) => <p>{p}</p>)}
+        <p>{author.engagement.before}<a href={author.engagement.link.url} rel="noopener" data-track="outbound" data-track-to="richallen.info">{author.engagement.link.label}</a>{author.engagement.after}</p>
+        {!compact && clients.length > 0 && <p class="about__clients">He has worked with teams at {clientList}.</p>}
       </div>
       <ul role="list" class="about__links meta">
-        <li><a href={author.links.website.url} rel="me noopener" data-track="outbound" data-track-to="richallen.info">{author.links.website.label}<span aria-hidden="true"> ↗</span></a></li>
+        <li><a href={author.links.bio.url} rel="me noopener" data-track="outbound" data-track-to="richallen.info">{author.links.bio.label}<span aria-hidden="true"> ↗</span></a></li>
+        <li><a href={author.links.linkedin.url} rel="me noopener" data-track="outbound" data-track-to="linkedin.com">{author.links.linkedin.label}<span aria-hidden="true"> ↗</span></a></li>
         <li><a href={author.links.userNeedsMapping.url} rel="noopener" data-track="outbound" data-track-to="userneedsmapping.com">{author.links.userNeedsMapping.label}<span aria-hidden="true"> ↗</span></a></li>
         <li><a href={author.links.fastFlowToolkit.url} rel="noopener" data-track="outbound" data-track-to="fastflowtoolkit.com">{author.links.fastFlowToolkit.label}<span aria-hidden="true"> ↗</span></a></li>
       </ul>
@@ -28,15 +40,27 @@ const { author } = site;
 <style>
   .about { padding-block: var(--space-4) var(--space-3); }
   .about__grid { display: grid; gap: var(--space-2); padding-top: var(--space-3); }
+  .about__aside { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+  .about__photo {
+    width: 3.5rem; height: 3.5rem; flex: none;
+    border-radius: 50%; object-fit: cover;
+    background: var(--card);
+    box-shadow: 0 0 0 1px var(--rule-soft), var(--shadow-card);
+  }
   .about__text { display: grid; gap: 0.6rem; max-width: var(--measure); }
   .about__name { font-size: var(--step-2); }
   .about__role { margin-top: -0.2rem; }
   .about__bio { color: var(--ink-2); text-wrap: pretty; }
   .about__bio p + p { margin-top: 0.8em; }
+  .about__bio a { text-decoration-color: var(--accent); }
+  .about__bio a:hover { color: var(--accent); }
+  .about__clients { color: var(--ink-3); font-size: var(--step--1); }
   .about__links { display: flex; flex-wrap: wrap; gap: 0 1.5rem; margin-top: 0.25rem; }
   .about__links a { text-decoration: none; }
   .about__links a:hover { color: var(--accent); }
   @media (min-width: 720px) {
     .about__grid { grid-template-columns: 11rem 1fr; gap: var(--space-3); }
+    .about__aside { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: var(--space-2); }
+    .about__photo { width: 4.5rem; height: 4.5rem; }
   }
 </style>

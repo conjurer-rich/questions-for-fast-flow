@@ -44,6 +44,7 @@ src/
 public/
   fonts/                   self-hosted Fraunces + Inter (SIL OFL)
   og/                      social sharing images (generated, committed)
+  rich-allen.webp          the author portrait shown in "About the author"
   favicon.svg, *.png, favicon.ico, site.webmanifest, robots.txt
 scripts/
   generate-images.mjs      renders OG images + icons with Playwright
@@ -81,7 +82,7 @@ Set these under *Site configuration → Environment variables* in Netlify. All a
 
 | Variable | Purpose |
 | --- | --- |
-| `PUBLIC_CONTACT_EMAIL` | Shows a "Start a conversation" mailto link in the contact section instead of a link to richallen.info. |
+| `PUBLIC_CONTACT_EMAIL` | Shows a "Start a conversation" mailto link in the contact section, with the question in the subject line, instead of a link to richallen.info/lets-talk. |
 | `PUBLIC_ANALYTICS_PROVIDER` | `none` (default), `plausible`, `umami` or `goatcounter`. |
 | `PUBLIC_ANALYTICS_ID` | Plausible: the site domain. Umami: the website id. GoatCounter: your code (the `xxx` in `xxx.goatcounter.com`). |
 | `PUBLIC_ANALYTICS_HOST` | Self-hosted Plausible/Umami origin. Leave empty for the hosted service. |
@@ -126,6 +127,7 @@ curl -s https://questions.richallen.info/sitemap-index.xml | head
 ### Publishing checklist
 
 - [ ] Deploy preview reviewed on a phone
+- [ ] Card trim size confirmed with the printer (`print/cards.html` is 85 × 55 mm)
 - [ ] Environment variables set (contact email, analytics) and redeployed
 - [ ] Custom domain added, Cloudflare CNAME created as *DNS only*, HTTPS provisioned, primary domain set
 - [ ] NFC tags written with `https://questions.richallen.info/<slug>` and locked (see `docs/card-design-spec.md`)

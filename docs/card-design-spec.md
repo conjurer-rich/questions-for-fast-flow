@@ -58,7 +58,7 @@ Safe area is 4.5 mm from the trimmed edge on top and bottom, 5 mm on the sides. 
 
 ### Back
 
-The masthead, much reduced: ink rules at top and bottom, "Vol. I · Five questions" and "By Rich Allen" as tracked caps, the title "Better questions" in italic Fraunces, "One of five better questions." beneath, and the site address at the foot. The back can also carry the NFC mark if the tag is read more reliably from that side.
+The masthead, much reduced: ink rules at top and bottom, "Vol. I · Fast Flow Conference 2026" and "By Rich Allen" as tracked caps (the edition stamp is what makes the set a dated, collectible object), the title "Better questions" in italic Fraunces, "One of five better questions." beneath, and the site address at the foot. The back can also carry the NFC mark if the tag is read more reliably from that side.
 
 ### NFC tag position
 
@@ -71,6 +71,7 @@ The masthead, much reduced: ink rules at top and bottom, "Vol. I · Five questio
 
 - 10 × 10 mm, error correction level M, black on white, 1-module quiet zone minimum.
 - Encode exactly the same URL as the NFC tag, with no tracking parameters, so analytics are not split (see README, "Analytics").
+- `print/cards.html` carries the five codes as inline SVG (29 × 29 modules plus the quiet zone), generated with the `qrcode` npm package. Regenerate them if a URL ever changes.
 
 ## Encoding the tags
 
