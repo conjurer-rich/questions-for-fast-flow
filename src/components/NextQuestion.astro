@@ -1,0 +1,24 @@
+---
+import { pad } from '@/lib/site';
+import type { Question } from '@/lib/questions';
+import QuestionCard from '@/components/QuestionCard.astro';
+interface Props { next: Question; prev: Question }
+const { next, prev } = Astro.props;
+---
+<nav class="next-question" aria-label="Continue to another question">
+  <p class="meta"><span class="accent">Next</span><span class="sep" aria-hidden="true">·</span>Explore another question</p>
+  <QuestionCard number={next.data.number} category={next.data.category} question={next.data.question} href={`/${next.id}`} track="question_next" trackTo={next.id} class="next-question__card" />
+  <p class="next-question__links meta meta--muted">
+    <a href={`/${prev.id}`} rel="prev" data-track="question_prev" data-track-to={prev.id}><span aria-hidden="true">← </span>{pad(prev.data.number)} {prev.data.category}</a>
+    <a href={`/${next.id}`} rel="next" data-track="question_next" data-track-to={next.id}>{pad(next.data.number)} {next.data.category}<span aria-hidden="true"> →</span></a>
+  </p>
+  <p class="next-question__all meta"><a href="/" data-track="question_index">All five questions</a></p>
+</nav>
+
+<style>
+  .next-question { margin-block: var(--space-5); display: grid; gap: var(--space-3); max-width: var(--measure); }
+  .next-question__links { display: flex; justify-content: space-between; gap: var(--space-2); }
+  .next-question__links a, .next-question__all a { text-decoration: none; }
+  .next-question__links a:hover, .next-question__all a:hover { color: var(--accent); }
+  .next-question__all { margin-top: -0.5rem; }
+</style>

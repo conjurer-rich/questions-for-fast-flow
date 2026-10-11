@@ -1,0 +1,45 @@
+---
+/**
+ * The question index as a row of tracked numbers, 01 to 05. Each is a link;
+ * the current one is underlined in oxblood. Works without JavaScript.
+ */
+import { pad } from '@/lib/site';
+import type { Question } from '@/lib/questions';
+interface Props { questions: Question[]; currentId?: string; labels?: boolean }
+const { questions, currentId, labels = false } = Astro.props;
+---
+<ol role="list" class:list={['progress', { 'progress--labels': labels }]}>
+  {questions.map((q) => {
+    const isCurrent = q.id === currentId;
+    return (
+      <li>
+        <a
+          href={`/${q.id}`}
+          class:list={['progress__item', 'meta', { 'is-current': isCurrent }]}
+          aria-current={isCurrent ? 'page' : undefined}
+          aria-label={`Question ${pad(q.data.number)}, ${q.data.category}: ${q.data.question}`}
+        >
+          <span class="progress__num">{pad(q.data.number)}</span>
+          {labels && <span class="progress__label"> {q.data.category}</span>}
+        </a>
+      </li>
+    );
+  })}
+</ol>
+
+<style>
+  .progress { display: flex; gap: 0; }
+  .progress__item {
+    display: inline-block; padding: 0.45rem 0.55rem; text-decoration: none; color: var(--ink-3);
+    border-bottom: 2px solid transparent; transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .progress__item:hover { color: var(--ink); }
+  .progress__item.is-current { color: var(--accent); border-bottom-color: var(--accent); }
+  .progress__item .progress__num { font-weight: 600; }
+  .progress--labels { flex-wrap: wrap; justify-content: center; }
+  .progress--labels .progress__item { padding: 0.45rem 0.9rem; color: var(--ink); }
+  .progress--labels .progress__item .progress__num { color: var(--accent); }
+  .progress--labels li { display: inline-flex; align-items: center; }
+  .progress--labels li + li::before { content: '·'; color: var(--ink-3); margin-inline: 0.15rem 0.05rem; font-family: var(--sans); }
+  @media (max-width: 400px) { .progress__item { padding-inline: 0.4rem; } }
+</style>

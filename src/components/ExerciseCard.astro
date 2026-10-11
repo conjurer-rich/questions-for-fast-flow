@@ -1,0 +1,32 @@
+---
+/**
+ * The practical exercise. The prompt is rendered as a card object (the
+ * same white card as the physical set), with the working notes beneath it.
+ */
+import { site } from '@/lib/site';
+interface Props { prompt: string; notes: string[]; number: string; category: string }
+const { prompt, notes, number, category } = Astro.props;
+---
+<aside class="exercise" aria-labelledby="exercise-heading">
+  <p class="meta" id="exercise-heading"><span class="accent">Try this</span><span class="sep" aria-hidden="true">·</span>A practical exercise</p>
+  <div class="card card--tall exercise__card">
+    <span class="card__meta"><span><span class="num">No. {number}</span></span><span>{category}</span></span>
+    <span class="card__q">{prompt}</span>
+    <span class="card__brand">{site.name} <span aria-hidden="true">×</span><span class="visually-hidden">by</span> {site.author.name}</span>
+  </div>
+  {notes.length > 0 && (
+    <ol class="exercise__notes">
+      {notes.map((n) => <li>{n}</li>)}
+    </ol>
+  )}
+</aside>
+
+<style>
+  .exercise { margin-block: var(--space-5); display: grid; gap: var(--space-3); max-width: var(--measure); }
+  .exercise__card .card__q { font-size: clamp(1.1rem, 0.7rem + 2.2vw, 1.55rem); max-width: 26ch; }
+  .exercise__notes {
+    padding-left: 1.5em; color: var(--ink-2); font-size: var(--step-0); line-height: 1.5; text-wrap: pretty;
+  }
+  .exercise__notes li + li { margin-top: 0.7em; }
+  .exercise__notes li::marker { color: var(--accent); font-family: var(--sans); font-weight: 600; font-size: 0.85em; }
+</style>

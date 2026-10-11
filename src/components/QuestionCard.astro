@@ -1,0 +1,26 @@
+---
+/**
+ * The card object: a white rounded card with the question set bold,
+ * uppercase and centred in oxblood, as on the printed set. Renders as a
+ * link when `href` is given.
+ */
+import { site, pad } from '@/lib/site';
+interface Props {
+  number: number;
+  category: string;
+  question: string;
+  href?: string;
+  track?: string;
+  trackTo?: string;
+  tall?: boolean;
+  class?: string;
+  style?: string;
+}
+const { number, category, question, href, track, trackTo, tall = false, class: cls, style } = Astro.props;
+const Tag = href ? 'a' : 'div';
+---
+<Tag class:list={['card', { 'card--tall': tall }, cls]} href={href} data-track={track} data-track-to={trackTo} style={style}>
+  <span class="card__meta"><span><span class="visually-hidden">Question </span><span class="num">No. {pad(number)}</span></span><span>{category}</span></span>
+  <span class="card__q">{question}</span>
+  <span class="card__brand">{site.name} <span aria-hidden="true">×</span><span class="visually-hidden">by</span> {site.author.name}</span>
+</Tag>

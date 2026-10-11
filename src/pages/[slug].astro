@@ -1,0 +1,156 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SiteHeader from '@/components/SiteHeader.astro';
+import SiteFooter from '@/components/SiteFooter.astro';
+import Progress from '@/components/Progress.astro';
+import ExerciseCard from '@/components/ExerciseCard.astro';
+import ShareButton from '@/components/ShareButton.astro';
+import NextQuestion from '@/components/NextQuestion.astro';
+import About from '@/components/About.astro';
+import Contact from '@/components/Contact.astro';
+import { site, pad, readMinutes } from '@/lib/site';
+import { getQuestions, neighbours, type Question } from '@/lib/questions';
+
+export async function getStaticPaths() {
+  const questions = await getQuestions();
+  return questions.map((q) => ({ params: { slug: q.id }, props: { question: q, questions } }));
+}
+
+interface Props { question: Question; questions: Question[] }
+const { question, questions } = Astro.props;
+const { data } = question;
+const { Content } = await render(question);
+const { prev, next, total } = neighbours(questions, question);
+const num = pad(data.number);
+const path = `/${question.id}`;
+const url = new URL(path, site.url).href;
+const countWord = ['zero','one','two','three','four','five','six','seven','eight','nine','ten'][total] ?? String(total);
+const minutes = readMinutes([question.body ?? '', ...data.opening, data.exercise.prompt, ...data.exercise.notes, data.followUp.question].join(' '));
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: data.question,
+  description: data.summary,
+  articleSection: data.category,
+  position: data.number,
+  inLanguage: 'en-GB',
+  isPartOf: { '@type': 'WebSite', name: site.name, url: site.url },
+  author: { '@type': 'Person', name: site.author.name, url: site.author.links.website.url },
+  mainEntityOfPage: url,
+  image: new URL(`/og/${question.id}.png`, site.url).href,
+};
+---
+<BaseLayout
+  title={data.question}
+  description={data.summary}
+  path={path}
+  image={`/og/${question.id}.png`}
+  imageAlt={`Question ${num}, ${data.category}: ${data.question}`}
+  type="article"
+  schema={schema}
+>
+  <SiteHeader current={path}>
+    <Progress questions={questions} currentId={question.id} />
+  </SiteHeader>
+
+  <main id="main" class="question">
+    <article class="wrap wrap--narrow">
+      <header class="q-head">
+        <p class="meta reveal" style="--i:0">
+          <span class="visually-hidden">Question </span><span class="num">No. {num}</span><span class="sep" aria-hidden="true">·</span>{data.category}
+          <span class="q-head__of"><span class="sep" aria-hidden="true">·</span>One of {countWord} better questions</span>
+        </p>
+        <h1 class="q-head__title display reveal" style="--i:1">{data.question}</h1>
+        <p class="q-head__idea lede reveal" style="--i:2">{data.coreIdea}</p>
+        <p class="q-head__byline meta meta--muted reveal" style="--i:2">By {site.author.name}<span class="sep" aria-hidden="true">·</span>{minutes} minute read</p>
+      </header>
+
+      <hr class="rule" />
+
+      <div class="q-opening reveal" style="--i:3">
+        {data.opening.map((p) => <p>{p}</p>)}
+      </div>
+
+      <div class="q-body prose">
+        <Content />
+      </div>
+
+      <ExerciseCard prompt={data.exercise.prompt} notes={data.exercise.notes} number={num} category={data.category} />
+
+      <section class="q-follow" aria-labelledby="follow-heading">
+        <p class="meta" id="follow-heading"><span class="accent">Go further</span><span class="sep" aria-hidden="true">·</span>A follow-up question</p>
+        <p class="q-follow__q display">{data.followUp.question}</p>
+        {data.followUp.note && <p class="q-follow__note">{data.followUp.note}</p>}
+      </section>
+
+      {data.resource && (
+        <section class="q-resource" aria-labelledby="resource-heading">
+          <p class="meta" id="resource-heading"><span class="accent">One resource</span><span class="sep" aria-hidden="true">·</span>If you want to go deeper</p>
+          <a class="q-resource__link" href={data.resource.url} rel="noopener" data-track="outbound" data-track-to={new URL(data.resource.url).hostname}>
+            <span class="q-resource__name display">{data.resource.name}<span aria-hidden="true"> ↗</span></span>
+            <span class="q-resource__desc">{data.resource.description}</span>
+          </a>
+        </section>
+      )}
+
+      <div class="q-share">
+        <ShareButton title={`${data.question} — ${site.name}`} text={data.question} url={url} />
+      </div>
+
+      <NextQuestion next={next} prev={prev} />
+
+      <About compact />
+      <Contact />
+    </article>
+  </main>
+
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .q-head { display: grid; gap: var(--space-2); padding-block: var(--space-4) var(--space-3); }
+  @media (max-width: 480px) { .q-head__of { display: none; } }
+  .q-head__title { font-size: var(--step-4); line-height: 1.0; padding-block: 0.2em 0.1em; }
+  .q-head__idea { color: var(--ink-2); max-width: 33rem; }
+  .q-head__byline { margin-top: var(--space-1); }
+
+  .q-opening { display: grid; gap: 1em; max-width: var(--measure); padding-top: var(--space-4); }
+  .q-opening p { font-size: var(--step-1); line-height: 1.4; color: var(--ink); text-wrap: pretty; }
+  .q-opening p:first-child::first-letter {
+    font-size: 3.1em; line-height: 0.82; float: left; margin: 0.06em 0.12em 0 0; color: var(--accent); font-weight: 500;
+  }
+
+  .q-body { margin-top: var(--space-3); }
+
+  .q-follow { margin-block: var(--space-5); display: grid; gap: var(--space-2); max-width: var(--measure); }
+  .q-follow__q { font-size: var(--step-3); line-height: 1.08; padding-top: 0.2em; }
+  .q-follow__note { color: var(--ink-2); text-wrap: pretty; }
+
+  .q-resource { margin-block: var(--space-5); display: grid; gap: var(--space-2); max-width: var(--measure); }
+  .q-resource__link {
+    display: grid; gap: 0.5rem; padding: var(--space-3) 0;
+    border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+    text-decoration: none; color: var(--ink);
+    transition: color var(--dur) var(--ease);
+  }
+  .q-resource__link:hover .q-resource__name { color: var(--accent); }
+  .q-resource__name { font-size: var(--step-2); }
+  .q-resource__desc { color: var(--ink-2); font-size: var(--step-0); line-height: 1.5; }
+
+  .q-share { margin-block: var(--space-4); }
+</style>
+
+<script>
+  // Keyboard shortcut: ← / → move between questions. The links exist in the DOM regardless.
+  const prev = document.querySelector<HTMLAnchorElement>('a[rel="prev"]');
+  const next = document.querySelector<HTMLAnchorElement>('a[rel="next"]');
+  document.addEventListener('keydown', (e) => {
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+    const t = e.target as HTMLElement | null;
+    if (t && /^(input|textarea|select)$/i.test(t.tagName)) return;
+    if (e.key === 'ArrowRight' && next) location.assign(next.href);
+    if (e.key === 'ArrowLeft' && prev) location.assign(prev.href);
+  });
+</script>

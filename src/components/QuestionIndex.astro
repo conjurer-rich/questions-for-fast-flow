@@ -1,0 +1,39 @@
+---
+/**
+ * The homepage collection: the five cards laid out as a spread, each
+ * preceded by its index entry (number, category, the question in italic
+ * serif, the core idea). On a phone the cards stack; on wider screens
+ * they sit two across, with the index text beside each card.
+ */
+import type { Question } from '@/lib/questions';
+import QuestionCard from '@/components/QuestionCard.astro';
+interface Props { questions: Question[] }
+const { questions } = Astro.props;
+---
+<ol role="list" class="index">
+  {questions.map((q, i) => (
+    <li class="index__item reveal" style={`--i:${i + 2}`}>
+      <QuestionCard number={q.data.number} category={q.data.category} question={q.data.question} href={`/${q.id}`} track="question_open" trackTo={q.id} />
+      <div class="index__entry">
+        <p class="index__idea">{q.data.coreIdea}</p>
+        <a class="index__cta arrow-link meta" href={`/${q.id}`} tabindex="-1" aria-hidden="true">Explore <span class="arrow">→</span></a>
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .index { display: grid; gap: var(--space-4); }
+  .index__item { display: grid; gap: var(--space-2); align-content: start; }
+  .index__entry { display: grid; gap: 0.6rem; padding-inline: 0.25rem; padding-top: 0.25rem; }
+  .index__idea { color: var(--ink-2); font-size: var(--step-0); line-height: 1.45; text-wrap: pretty; max-width: 34rem; }
+  .index__cta { color: var(--accent); }
+
+  @media (min-width: 640px) {
+    .index { grid-template-columns: repeat(2, 1fr); gap: var(--space-4) var(--space-3); }
+  }
+  @media (min-width: 1000px) {
+    .index { grid-template-columns: repeat(3, 1fr); gap: var(--space-5) var(--space-4); }
+    /* Let the sixth slot carry nothing: the set is five, and the gap reads as deliberate. */
+  }
+</style>

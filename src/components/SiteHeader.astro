@@ -1,0 +1,54 @@
+---
+/**
+ * Two mastheads. `variant="masthead"` is the full journal head used on the
+ * homepage: metadata row, big italic title, tagline, question nav, rules.
+ * `variant="compact"` is the single-row head on question pages.
+ */
+import { site } from '@/lib/site';
+interface Props { variant?: 'masthead' | 'compact'; current?: string }
+const { variant = 'compact', current } = Astro.props;
+---
+{variant === 'masthead' ? (
+  <header class="masthead">
+    <div class="wrap">
+      <p class="masthead__row meta meta--muted reveal" style="--i:0">
+        <span>{site.edition.volume}<span class="sep" aria-hidden="true">·</span>Five questions</span>
+        <span class="masthead__row-mid">{site.edition.note}</span>
+        <span>By {site.author.name}</span>
+      </p>
+      <hr class="rule" />
+      <h1 class="masthead__title display reveal" style="--i:1">{site.name}</h1>
+      <p class="masthead__tagline reveal" style="--i:2">{site.tagline}</p>
+      <nav class="masthead__nav reveal" style="--i:2" aria-label="Questions"><slot /></nav>
+      <hr class="rule" />
+    </div>
+  </header>
+) : (
+  <header class="site-header">
+    <div class="wrap">
+      <hr class="rule" />
+      <div class="site-header__row">
+        <a class="site-header__brand" href="/" aria-label={`${site.name} — all questions`}>{site.name}</a>
+        <slot />
+      </div>
+      <hr class="rule rule--soft" />
+    </div>
+  </header>
+)}
+
+<style>
+  .masthead { padding-top: var(--space-3); }
+  .masthead__row { display: flex; justify-content: space-between; gap: var(--space-2); padding-bottom: 0.6rem; }
+  .masthead__row-mid { text-align: center; }
+  .masthead__title { font-size: var(--step-5); text-align: center; padding-top: clamp(1.25rem, 4vw, 2.5rem); letter-spacing: -0.035em; line-height: 0.95; }
+  .masthead__tagline { text-align: center; font-style: italic; color: var(--ink-2); font-size: var(--step-1); margin-top: 0.75rem; }
+  .masthead__nav { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem 0; padding: var(--space-3) 0 0.9rem; }
+  @media (max-width: 600px) {
+    .masthead__row-mid { display: none; }
+  }
+
+  .site-header { padding-top: var(--space-2); }
+  .site-header__row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); padding: 0.7rem 0; }
+  .site-header__brand { font-family: var(--serif); font-style: italic; font-size: var(--step-1); font-weight: 400; letter-spacing: -0.02em; text-decoration: none; color: var(--ink); }
+  .site-header__brand:hover { color: var(--accent); }
+</style>

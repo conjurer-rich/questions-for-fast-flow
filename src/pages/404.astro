@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SiteHeader from '@/components/SiteHeader.astro';
+import SiteFooter from '@/components/SiteFooter.astro';
+import Progress from '@/components/Progress.astro';
+import QuestionIndex from '@/components/QuestionIndex.astro';
+import { getQuestions } from '@/lib/questions';
+const questions = await getQuestions();
+---
+<BaseLayout title="Page not found" description="That page doesn’t exist, but the questions do." path="/404">
+  <SiteHeader current="/404"><Progress questions={questions} /></SiteHeader>
+  <main id="main" class="wrap">
+    <p class="meta nf__meta"><span class="num">404</span><span class="sep" aria-hidden="true">·</span>Not found</p>
+    <h1 class="display nf__title">That page isn’t here. The questions are.</h1>
+    <p class="nf__body">If you arrived from a card, try tapping it again or pick a question below.</p>
+    <div class="nf__index"><QuestionIndex questions={questions} /></div>
+  </main>
+  <SiteFooter />
+</BaseLayout>
+<style>
+  .nf__meta { padding-top: var(--space-4); }
+  .nf__title { font-size: var(--step-4); margin-block: var(--space-2); }
+  .nf__body { color: var(--ink-2); max-width: var(--measure); }
+  .nf__index { margin-top: var(--space-5); }
+</style>

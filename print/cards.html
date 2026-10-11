@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Better questions — printable card sheet (85 × 55 mm)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @font-face { font-family: 'Fraunces'; font-weight: 100 900; src: url('../public/fonts/fraunces.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: italic; font-weight: 100 900; src: url('../public/fonts/fraunces-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Inter'; font-weight: 100 900; src: url('../public/fonts/inter.woff2') format('woff2-variations'); }
+
+  :root { --paper: #f5f3ee; --card: #ffffff; --ink: #141311; --ink-2: #3d3a35; --ink-3: #6b675f; --accent: #7f1d1d; --bleed: 3mm; }
+  @page { size: A4; margin: 0; }
+  html, body { margin: 0; background: #ddd; font-family: Inter, sans-serif; color: var(--ink); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .sheet {
+    width: 210mm; min-height: 297mm; margin: 0 auto; background: #fff; box-sizing: border-box;
+    padding: 12mm 10mm; display: grid; grid-template-columns: repeat(2, auto); justify-content: center;
+    gap: 10mm 12mm; page-break-after: always;
+  }
+  .sheet h1 { grid-column: 1 / -1; font: 500 11pt/1.3 Inter, sans-serif; margin: 0 0 2mm; color: var(--ink-2); }
+  .sheet h1 small { font-weight: 400; color: var(--ink-3); }
+
+  .card-wrap { position: relative; width: calc(85mm + 2 * var(--bleed)); height: calc(55mm + 2 * var(--bleed)); }
+  .crop { position: absolute; width: 0; height: 0; }
+  .crop::before, .crop::after { content: ''; position: absolute; background: #000; }
+  .crop::before { width: 4mm; height: 0.15mm; }
+  .crop::after  { width: 0.15mm; height: 4mm; }
+  .crop.tl { left: 0; top: 0; }  .crop.tl::before { left: -5mm; top: var(--bleed); } .crop.tl::after { top: -5mm; left: var(--bleed); }
+  .crop.tr { right: 0; top: 0; } .crop.tr::before { right: -5mm; top: var(--bleed); } .crop.tr::after { top: -5mm; right: var(--bleed); }
+  .crop.bl { left: 0; bottom: 0; } .crop.bl::before { left: -5mm; bottom: var(--bleed); } .crop.bl::after { bottom: -5mm; left: var(--bleed); }
+  .crop.br { right: 0; bottom: 0; } .crop.br::before { right: -5mm; bottom: var(--bleed); } .crop.br::after { bottom: -5mm; right: var(--bleed); }
+
+  /* The card: white, 4 mm radius at trim, question bold uppercase centred in oxblood. */
+  .card { position: absolute; inset: 0; background: var(--card); overflow: hidden; border: 0.1mm solid #e4e1da; }
+  .face { position: absolute; inset: calc(var(--bleed) + 4.5mm) calc(var(--bleed) + 5mm); display: grid; grid-template-rows: auto 1fr auto; text-align: center; }
+  .head { display: flex; justify-content: space-between; font: 600 6pt/1 Inter, sans-serif; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); }
+  .head .num { color: var(--accent); }
+  .q { align-self: center; margin: 0; font: 800 12.5pt/1.12 Inter, sans-serif; text-transform: uppercase; color: var(--accent); letter-spacing: -0.005em; text-wrap: balance; max-width: 60mm; justify-self: center; }
+  .card.long .q { font-size: 11pt; }
+  .foot { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 3mm; text-align: left; }
+  .brand { font: 700 5.5pt/1.5 Inter, sans-serif; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); }
+  .url { font: 400 5.5pt/1.5 Inter, sans-serif; color: var(--ink-3); letter-spacing: 0.02em; }
+  .tap { display: grid; grid-template-columns: auto auto; align-items: center; gap: 1.5mm; }
+  .qr { width: 10mm; height: 10mm; background: var(--ink); display: grid; place-items: center; }
+  .qr span { background: #fff; color: var(--ink); font: 500 4.5pt/1 Inter, sans-serif; padding: 0.6mm 0.8mm; }
+  .nfc { display: grid; justify-items: center; gap: 0.6mm; font: 400 4.8pt/1 Inter, sans-serif; color: var(--ink-3); white-space: nowrap; }
+  .nfc svg { width: 6mm; height: 6mm; color: var(--accent); }
+  /* NFC antenna target (guide only): centre 13 mm from right trim, 10 mm from bottom trim, 25 mm diameter. */
+  .nfc-zone { position: absolute; width: 25mm; height: 25mm; right: calc(var(--bleed) + 13mm - 12.5mm); bottom: calc(var(--bleed) + 10mm - 12.5mm); border: 0.3mm dashed rgba(20,19,17,.35); border-radius: 50%; }
+  .nfc-zone::after { content: 'NFC inlay (guide only)'; position: absolute; left: 50%; top: 1.2mm; transform: translateX(-50%); font: 400 4.5pt/1 Inter, sans-serif; color: rgba(20,19,17,.5); white-space: nowrap; }
+  body.hide-guides .nfc-zone { display: none; }
+
+  /* Back face: the masthead. */
+  .back .face { display: grid; place-items: center; grid-template-rows: none; }
+  .back .title { font: italic 400 20pt/1 Fraunces, serif; letter-spacing: -0.03em; color: var(--ink); }
+  .back .tag { font: italic 300 7.5pt/1.4 Fraunces, serif; color: var(--ink-2); margin-top: 1.5mm; }
+  .back .rule { width: 100%; border-top: 0.25mm solid var(--ink); position: absolute; left: 0; }
+  .back .rule.top { top: 0; } .back .rule.bottom { bottom: 0; }
+  .back .site { position: absolute; bottom: 2mm; left: 0; right: 0; font: 500 5.5pt/1 Inter, sans-serif; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); }
+  .back .vol { position: absolute; top: 2mm; left: 0; right: 0; display: flex; justify-content: space-between; font: 500 5pt/1 Inter, sans-serif; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); }
+
+  .controls { position: fixed; right: 12px; top: 12px; background: #fff; padding: 8px 12px; border-radius: 6px; box-shadow: 0 2px 12px rgba(0,0,0,.2); font: 13px/1.4 Inter, sans-serif; }
+  @media print { .controls { display: none; } html, body { background: #fff; } }
+</style>
+</head>
+<body>
+<div class="controls"><label><input type="checkbox" id="guides" checked> Show NFC inlay guide</label></div>
+
+<section class="sheet" aria-label="Card fronts and back">
+  <h1>Better questions — cards <small>· 85 × 55 mm trim, 3 mm bleed, crop marks at trim · white stock, oxblood + black</small></h1>
+
+  <!-- 01 -->
+  <div class="card-wrap"><div class="card"><div class="face">
+    <div class="head"><span class="num">No. 01</span><span>Flow</span></div>
+    <p class="q">Where does work actually wait?</p>
+    <div class="foot">
+      <div><div class="brand">Better questions × Rich Allen</div><div class="url">questions.richallen.info/flow</div></div>
+      <div class="tap"><div class="qr" title="Replace with QR for https://questions.richallen.info/flow"><span>QR</span></div><div class="nfc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M9 9.5a3.5 3.5 0 0 1 0 5"/><path d="M11.5 7.5a6.5 6.5 0 0 1 0 9"/><path d="M14 5.5a9.5 9.5 0 0 1 0 13"/></svg>Tap to explore</div></div>
+    </div>
+  </div><div class="nfc-zone"></div></div><i class="crop tl"></i><i class="crop tr"></i><i class="crop bl"></i><i class="crop br"></i></div>
+
+  <!-- 02 -->
+  <div class="card-wrap"><div class="card long"><div class="face">
+    <div class="head"><span class="num">No. 02</span><span>Teams</span></div>
+    <p class="q">Are your teams organised around value or dependencies?</p>
+    <div class="foot">
+      <div><div class="brand">Better questions × Rich Allen</div><div class="url">questions.richallen.info/teams</div></div>
+      <div class="tap"><div class="qr" title="Replace with QR for https://questions.richallen.info/teams"><span>QR</span></div><div class="nfc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M9 9.5a3.5 3.5 0 0 1 0 5"/><path d="M11.5 7.5a6.5 6.5 0 0 1 0 9"/><path d="M14 5.5a9.5 9.5 0 0 1 0 13"/></svg>Tap to explore</div></div>
+    </div>
+  </div><div class="nfc-zone"></div></div><i class="crop tl"></i><i class="crop tr"></i><i class="crop bl"></i><i class="crop br"></i></div>
+
+  <!-- 03 -->
+  <div class="card-wrap"><div class="card long"><div class="face">
+    <div class="head"><span class="num">No. 03</span><span>AI</span></div>
+    <p class="q">What happens when AI makes the wrong work faster?</p>
+    <div class="foot">
+      <div><div class="brand">Better questions × Rich Allen</div><div class="url">questions.richallen.info/ai</div></div>
+      <div class="tap"><div class="qr" title="Replace with QR for https://questions.richallen.info/ai"><span>QR</span></div><div class="nfc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M9 9.5a3.5 3.5 0 0 1 0 5"/><path d="M11.5 7.5a6.5 6.5 0 0 1 0 9"/><path d="M14 5.5a9.5 9.5 0 0 1 0 13"/></svg>Tap to explore</div></div>
+    </div>
+  </div><div class="nfc-zone"></div></div><i class="crop tl"></i><i class="crop tr"></i><i class="crop bl"></i><i class="crop br"></i></div>
+
+  <!-- 04 -->
+  <div class="card-wrap"><div class="card"><div class="face">
+    <div class="head"><span class="num">No. 04</span><span>Users</span></div>
+    <p class="q">Could you explain why every team exists?</p>
+    <div class="foot">
+      <div><div class="brand">Better questions × Rich Allen</div><div class="url">questions.richallen.info/users</div></div>
+      <div class="tap"><div class="qr" title="Replace with QR for https://questions.richallen.info/users"><span>QR</span></div><div class="nfc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M9 9.5a3.5 3.5 0 0 1 0 5"/><path d="M11.5 7.5a6.5 6.5 0 0 1 0 9"/><path d="M14 5.5a9.5 9.5 0 0 1 0 13"/></svg>Tap to explore</div></div>
+    </div>
+  </div><div class="nfc-zone"></div></div><i class="crop tl"></i><i class="crop tr"></i><i class="crop bl"></i><i class="crop br"></i></div>
+
+  <!-- 05 -->
+  <div class="card-wrap"><div class="card long"><div class="face">
+    <div class="head"><span class="num">No. 05</span><span>Decisions</span></div>
+    <p class="q">What evidence would justify changing your teams?</p>
+    <div class="foot">
+      <div><div class="brand">Better questions × Rich Allen</div><div class="url">questions.richallen.info/decisions</div></div>
+      <div class="tap"><div class="qr" title="Replace with QR for https://questions.richallen.info/decisions"><span>QR</span></div><div class="nfc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M9 9.5a3.5 3.5 0 0 1 0 5"/><path d="M11.5 7.5a6.5 6.5 0 0 1 0 9"/><path d="M14 5.5a9.5 9.5 0 0 1 0 13"/></svg>Tap to explore</div></div>
+    </div>
+  </div><div class="nfc-zone"></div></div><i class="crop tl"></i><i class="crop tr"></i><i class="crop bl"></i><i class="crop br"></i></div>
+
+  <!-- Back -->
+  <div class="card-wrap"><div class="card back"><div class="face">
+    <div class="rule top"></div>
+    <div class="vol"><span>Vol. I · Five questions</span><span>By Rich Allen</span></div>
+    <div><div class="title">Better questions</div><div class="tag">One of five better questions.</div></div>
+    <div class="site">questions.richallen.info</div>
+    <div class="rule bottom"></div>
+  </div></div><i class="crop tl"></i><i class="crop tr"></i><i class="crop bl"></i><i class="crop br"></i></div>
+</section>
+
+<script>
+  document.getElementById('guides').addEventListener('change', (e) => { document.body.classList.toggle('hide-guides', !e.target.checked); });
+</script>
+</body>
+</html>
