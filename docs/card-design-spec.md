@@ -69,9 +69,10 @@ The masthead, much reduced: ink rules at top and bottom, "Vol. I · Fast Flow Co
 
 ### QR fallback
 
-- 10 × 10 mm, error correction level M, black on white, 1-module quiet zone minimum.
+- 12 × 12 mm overall, of which the symbol is 9.9 mm and the rest is a 4-module quiet zone. Black on white.
 - Encode exactly the same URL as the NFC tag, with no tracking parameters, so analytics are not split (see README, "Analytics").
-- `print/cards.html` carries the five codes as inline SVG (29 × 29 modules plus the quiet zone), generated with the `qrcode` npm package. Regenerate them if a URL ever changes.
+- `print/cards.html` carries the five supplied codes as inline SVG (version 5, 37 × 37 modules, 0.27 mm per module at this size). They were traced from the supplied PNGs and each traced code was decoded back to its URL. If a URL ever changes, replace the matching `<svg class="qr">`.
+- Check a printed proof with two or three phones before the run. If a code scans unreliably at this size, the fix is a larger box (14 mm) rather than a smaller quiet zone.
 
 ## Encoding the tags
 
