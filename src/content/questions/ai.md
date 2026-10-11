@@ -17,9 +17,9 @@ followUp:
   question: Is the work being accelerated the work your users most need done — and how would you know?
   note: Speeding up delivery of the wrong thing is still a cost. The question of what to build is upstream of the question of how fast to build it.
 resource:
-  name: Fast Flow Toolkit
-  url: https://fastflowtoolkit.com
-  description: Helps teams and leaders see where coordination friction and constraints actually sit, so that AI-enabled acceleration lands somewhere useful.
+  name: "Flow Awareness: Preparing for AI"
+  url: https://www.richallen.info/flow-awareness-sessions
+  description: Short sessions that help a leadership team see where its constraints actually sit before adding acceleration, so that AI lands somewhere useful.
 ---
 
 Consider a delivery process in which implementing a change takes a week, waiting for review takes a week, and waiting for a release window takes two more. Halving implementation time saves half a week out of four. That is a real gain, but it is not the fourfold improvement the demo implied, and it tends to come with a side effect: the reviewers now receive twice as much to review, and their queue grows.

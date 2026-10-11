@@ -55,7 +55,7 @@ The brief for all three: editorial not corporate, mobile-first (most visitors ar
 - Question first, always. On every page the question is the largest element and is readable without scrolling on a 360px-wide phone.
 - One accent per question, used for small marks only. The site remains two-colour (paper and ink) at a glance.
 - Motion is limited to a short reveal on load, a cross-fade between pages (native CSS view transitions where supported) and hover/focus states. All of it is disabled under `prefers-reduced-motion`.
-- No images are required to render any page; the only binary assets are three font files and the social sharing images.
+- No images are required to render any page; the only binary assets are three font files, the social sharing images and one small author portrait (the same headshot as richallen.info, shown beside the byline in "About the author" so a card reader can match the page to the person they met).
 
 ---
 
