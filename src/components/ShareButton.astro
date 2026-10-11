@@ -1,0 +1,71 @@
+---
+/**
+ * Copy or share the question. Progressive enhancement: the button is hidden
+ * until JavaScript confirms the Clipboard or Web Share API exists. Without
+ * JavaScript a plain mailto link is shown instead.
+ */
+interface Props { title: string; text: string; url: string }
+const { title, text, url } = Astro.props;
+const mailto = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(`${text}\n\n${url}`)}`;
+---
+<div class="share" data-share data-title={title} data-text={text} data-url={url}>
+  <a class="btn btn--quiet share__fallback" href={mailto}>
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
+    Share by email
+  </a>
+  <button class="btn btn--quiet share__btn" type="button" hidden>
+    <svg class="share__icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 3v12"/><path d="m8 7 4-4 4 4"/></svg>
+    <span class="share__label">Share this question</span>
+  </button>
+  <span class="share__status" role="status" aria-live="polite"></span>
+</div>
+
+<style>
+  .share { display: inline-flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+  .share__status { font-size: var(--step--1); color: var(--accent); min-height: 1.2em; }
+  .share__status:empty { display: none; }
+</style>
+
+<script>
+  const roots = document.querySelectorAll<HTMLElement>('[data-share]');
+  roots.forEach((root) => {
+    const btn = root.querySelector<HTMLButtonElement>('.share__btn');
+    const fallback = root.querySelector<HTMLElement>('.share__fallback');
+    const label = root.querySelector<HTMLElement>('.share__label');
+    const status = root.querySelector<HTMLElement>('.share__status');
+    if (!btn || !label || !status) return;
+
+    const data = { title: root.dataset.title ?? '', text: root.dataset.text ?? '', url: root.dataset.url ?? location.href };
+    const canShare = typeof navigator.share === 'function';
+    const canCopy = !!navigator.clipboard?.writeText;
+    if (!canShare && !canCopy) return;
+
+    btn.hidden = false;
+    if (fallback) fallback.hidden = true;
+    if (!canShare) label.textContent = 'Copy link to this question';
+
+    let timer: number | undefined;
+    const say = (msg: string) => {
+      status.textContent = msg;
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => { status.textContent = ''; }, 2600);
+    };
+
+    btn.addEventListener('click', async () => {
+      try {
+        if (canShare) {
+          await navigator.share(data);
+        } else {
+          await navigator.clipboard.writeText(data.url);
+          say('Link copied');
+        }
+      } catch (err) {
+        if ((err as Error)?.name === 'AbortError') return; // user dismissed the share sheet
+        if (canCopy) {
+          try { await navigator.clipboard.writeText(data.url); say('Link copied'); return; } catch {}
+        }
+        say('Could not share — the link is in your address bar');
+      }
+    });
+  });
+</script>

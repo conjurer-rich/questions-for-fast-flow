@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Better questions — printable card sheet (85 × 55 mm)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @font-face { font-family: 'Fraunces'; font-weight: 100 900; src: url('../public/fonts/fraunces-soft.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Fraunces'; font-style: italic; font-weight: 100 900; src: url('../public/fonts/fraunces-italic.woff2') format('woff2-variations'); }
+  @font-face { font-family: 'Inter'; font-weight: 100 900; src: url('../public/fonts/inter.woff2') format('woff2-variations'); }
+
+  :root {
+    --paper: #f3ede2; --ink: #1b1915; --ink-2: #4b463e; --ink-3: #6e675c;
+    --teal: #1f5f6b; --ochre: #8a5a14; --plum: #5b4b8a; --terracotta: #a3391f; --moss: #3c6b45;
+    --bleed: 3mm;
+  }
+  @page { size: A4; margin: 0; }
+  html, body { margin: 0; background: #ddd; font-family: Inter, sans-serif; color: var(--ink); }
+  .sheet {
+    width: 210mm; min-height: 297mm; margin: 0 auto; background: #fff; box-sizing: border-box;
+    padding: 12mm 10mm; display: grid; grid-template-columns: repeat(2, auto); justify-content: center;
+    gap: 10mm 12mm; page-break-after: always;
+  }
+  .sheet h1 { grid-column: 1 / -1; font: 500 11pt/1.3 Inter, sans-serif; margin: 0 0 2mm; color: var(--ink-2); }
+  .sheet h1 small { font-weight: 400; color: var(--ink-3); }
+
+  /* Card with bleed; crop marks mark the trim. */
+  .card-wrap { position: relative; width: calc(85mm + 2 * var(--bleed)); height: calc(55mm + 2 * var(--bleed)); }
+  .crop { position: absolute; width: 0; height: 0; }
+  .crop::before, .crop::after { content: ''; position: absolute; background: #000; }
+  .crop::before { width: 4mm; height: 0.15mm; }
+  .crop::after  { width: 0.15mm; height: 4mm; }
+  .crop.tl { left: 0; top: 0; }  .crop.tl::before { left: -5mm; top: var(--bleed); } .crop.tl::after { top: -5mm; left: var(--bleed); }
+  .crop.tr { right: 0; top: 0; } .crop.tr::before { right: -5mm; top: var(--bleed); } .crop.tr::after { top: -5mm; right: var(--bleed); }
+  .crop.bl { left: 0; bottom: 0; } .crop.bl::before { left: -5mm; bottom: var(--bleed); } .crop.bl::after { bottom: -5mm; left: var(--bleed); }
+  .crop.br { right: 0; bottom: 0; } .crop.br::before { right: -5mm; bottom: var(--bleed); } .crop.br::after { bottom: -5mm; right: var(--bleed); }
+
+  .card {
+    position: absolute; inset: 0; background: var(--paper); overflow: hidden;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .card .spine { position: absolute; left: 0; top: 0; bottom: 0; width: calc(2.5mm + var(--bleed)); background: var(--accent); }
+  /* Safe area: 4 mm inside trim = 7 mm inside bleed box (plus spine on the left). */
+  .face { position: absolute; left: calc(var(--bleed) + 8mm); right: calc(var(--bleed) + 4mm); top: calc(var(--bleed) + 4.5mm); bottom: calc(var(--bleed) + 4mm); display: grid; grid-template-rows: auto 1fr auto; }
+  .head { display: flex; justify-content: space-between; align-items: baseline; }
+  .num { font: 300 22pt/1 Fraunces, serif; color: var(--accent); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .cat { font: 500 6.5pt/1 Inter, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-left: 2mm; }
+  .brand { font: 500 8pt/1 Fraunces, serif; font-variation-settings: 'SOFT' 60; color: var(--ink); }
+  .q { align-self: center; font: 400 16pt/1.05 Fraunces, serif; font-variation-settings: 'SOFT' 60; letter-spacing: -0.02em; max-width: 62mm; text-wrap: balance; padding-block: 1.5mm; margin: 0; }
+  .card.long .q { font-size: 13.5pt; max-width: 64mm; }
+  .foot { display: grid; grid-template-columns: 1fr auto auto; gap: 3mm; align-items: end; height: 12mm; }
+  .url { font: 400 6.5pt/1.5 Inter, sans-serif; color: var(--ink-2); }
+  .url b { display: block; font-weight: 500; }
+  .qr { width: 11mm; height: 11mm; background: var(--ink); display: grid; place-items: center; color: var(--paper); font: 500 5pt/1 Inter, sans-serif; text-align: center; }
+  .qr span { background: var(--paper); color: var(--ink); padding: 0.6mm 0.8mm; border-radius: 0.5mm; }
+  .nfc { display: grid; justify-items: center; gap: 0.8mm; font: 400 5.5pt/1 Inter, sans-serif; color: var(--ink-3); white-space: nowrap; }
+  .nfc svg { width: 7mm; height: 7mm; color: var(--accent); }
+  /* NFC antenna target (not printed): centre 14 mm from right trim, 11 mm from bottom trim, 25 mm diameter. */
+  .nfc-zone { position: absolute; width: 25mm; height: 25mm; right: calc(var(--bleed) + 14mm - 12.5mm); bottom: calc(var(--bleed) + 11mm - 12.5mm); border: 0.3mm dashed rgba(27,25,21,.35); border-radius: 50%; }
+  .nfc-zone::after { content: 'NFC inlay (guide only)'; position: absolute; left: 50%; top: 1.2mm; transform: translateX(-50%); font: 400 4.5pt/1 Inter, sans-serif; color: rgba(27,25,21,.5); white-space: nowrap; }
+  body.hide-guides .nfc-zone { display: none; }
+
+  /* Back face */
+  .back .face { display: grid; place-items: center; text-align: center; grid-template-rows: none; left: calc(var(--bleed) + 4mm); }
+  .back .brand { font-size: 11pt; }
+  .back .tag { font: italic 300 8pt/1.4 Fraunces, serif; color: var(--ink-2); margin-top: 1.5mm; }
+  .back .site { position: absolute; bottom: 0; left: 0; right: 0; font: 400 6.5pt/1 Inter, sans-serif; color: var(--ink-3); }
+  .back .spine { width: var(--bleed); background: var(--ink); opacity: .9; }
+
+  .controls { position: fixed; right: 12px; top: 12px; background: #fff; padding: 8px 12px; border-radius: 6px; box-shadow: 0 2px 12px rgba(0,0,0,.2); font: 13px/1.4 Inter, sans-serif; }
+  @media print { .controls { display: none; } html, body { background: #fff; } }
+</style>
+</head>
+<body>
+<div class="controls">
+  <label><input type="checkbox" id="guides" checked> Show NFC inlay guide</label>
+</div>
+
+<section class="sheet" aria-label="Card fronts">
+  <h1>Better questions — card fronts <small>· 85 × 55 mm trim, 3 mm bleed, crop marks at trim</small></h1>
+
+  <div class="card-wrap">
+    <div class="card" style="--accent: var(--teal)">
+      <div class="spine"></div>
+      <div class="face">
+        <div class="head"><span><span class="num">01</span><span class="cat">Flow</span></span><span class="brand">Better questions</span></div>
+        <p class="q">Where does work actually wait?</p>
+        <div class="foot">
+          <div class="url"><b>questions.richallen.info/flow</b>A question from Rich Allen</div>
+          <div class="qr" title="Replace with generated QR code for https://questions.richallen.info/flow"><span>QR</span></div>
+          <div class="nfc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M9 9.5a3.5 3.5 0 0 1 0 5"/><path d="M11.5 7.5a6.5 6.5 0 0 1 0 9"/><path d="M14 5.5a9.5 9.5 0 0 1 0 13"/></svg>Tap to explore</div>
+        </div>
+      </div>
+      <div class="nfc-zone"></div>
+    </div>
+    <i class="crop tl"></i><i class="crop tr"></i><i class="crop bl"></i><i class="crop br"></i>
+  </div>
+
+  <div class="card-wrap">
+    <div class="card long" style="--accent: var(--ochre)">
+      <div class="spine"></div>
+      <div class="face">
+        <div class="head"><span><span class="num">02</span><span class="cat">Teams</span></span><span class="brand">Better questions</span></div>
+        <p class="q">Are your teams organised around value or dependencies?</p>
+        <div class="foot">
+          <div class="url"><b>questions.richallen.info/teams</b>A question from Rich Allen</div>
+          <div class="qr" title="Replace with generated QR code for https://questions.richallen.info/teams"><span>QR</span></div>
+          <div class="nfc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M9 9.5a3.5 3.5 0 0 1 0 5"/><path d="M11.5 7.5a6.5 6.5 0 0 1 0 9"/><path d="M14 5.5a9.5 9.5 0 0 1 0 13"/></svg>Tap to explore</div>
+        </div>
+      </div>
+      <div class="nfc-zone"></div>
+    </div>
+    <i class="crop tl"></i><i class="crop tr"></i><i class="crop bl"></i><i class="crop br"></i>
+  </div>
+
+  <div class="card-wrap">
+    <div class="card long" style="--accent: var(--plum)">
+      <div class="spine"></div>
+      <div class="face">
+        <div class="head"><span><span class="num">03</span><span class="cat">AI</span></span><span class="brand">Better questions</span></div>
+        <p class="q">What happens when AI makes the wrong work faster?</p>
+        <div class="foot">
+          <div class="url"><b>questions.richallen.info/ai</b>A question from Rich Allen</div>
+          <div class="qr" title="Replace with generated QR code for https://questions.richallen.info/ai"><span>QR</span></div>
+          <div class="nfc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M9 9.5a3.5 3.5 0 0 1 0 5"/><path d="M11.5 7.5a6.5 6.5 0 0 1 0 9"/><path d="M14 5.5a9.5 9.5 0 0 1 0 13"/></svg>Tap to explore</div>
+        </div>
+      </div>
+      <div class="nfc-zone"></div>
+    </div>
+    <i class="crop tl"></i><i class="crop tr"></i><i class="crop bl"></i><i class="crop br"></i>
+  </div>
+
+  <div class="card-wrap">
+    <div class="card" style="--accent: var(--terracotta)">
+      <div class="spine"></div>
+      <div class="face">
+        <div class="head"><span><span class="num">04</span><span class="cat">Users</span></span><span class="brand">Better questions</span></div>
+        <p class="q">Could you explain why every team exists?</p>
+        <div class="foot">
+          <div class="url"><b>questions.richallen.info/users</b>A question from Rich Allen</div>
+          <div class="qr" title="Replace with generated QR code for https://questions.richallen.info/users"><span>QR</span></div>
+          <div class="nfc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M9 9.5a3.5 3.5 0 0 1 0 5"/><path d="M11.5 7.5a6.5 6.5 0 0 1 0 9"/><path d="M14 5.5a9.5 9.5 0 0 1 0 13"/></svg>Tap to explore</div>
+        </div>
+      </div>
+      <div class="nfc-zone"></div>
+    </div>
+    <i class="crop tl"></i><i class="crop tr"></i><i class="crop bl"></i><i class="crop br"></i>
+  </div>
+
+  <div class="card-wrap">
+    <div class="card long" style="--accent: var(--moss)">
+      <div class="spine"></div>
+      <div class="face">
+        <div class="head"><span><span class="num">05</span><span class="cat">Decisions</span></span><span class="brand">Better questions</span></div>
+        <p class="q">What evidence would justify changing your teams?</p>
+        <div class="foot">
+          <div class="url"><b>questions.richallen.info/decisions</b>A question from Rich Allen</div>
+          <div class="qr" title="Replace with generated QR code for https://questions.richallen.info/decisions"><span>QR</span></div>
+          <div class="nfc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M9 9.5a3.5 3.5 0 0 1 0 5"/><path d="M11.5 7.5a6.5 6.5 0 0 1 0 9"/><path d="M14 5.5a9.5 9.5 0 0 1 0 13"/></svg>Tap to explore</div>
+        </div>
+      </div>
+      <div class="nfc-zone"></div>
+    </div>
+    <i class="crop tl"></i><i class="crop tr"></i><i class="crop bl"></i><i class="crop br"></i>
+  </div>
+
+  <div class="card-wrap">
+    <div class="card back">
+      <div class="spine"></div>
+      <div class="face">
+        <div>
+          <div class="brand">Better questions</div>
+          <div class="tag">One of five better questions.</div>
+        </div>
+        <div class="site">questions.richallen.info</div>
+      </div>
+    </div>
+    <i class="crop tl"></i><i class="crop tr"></i><i class="crop bl"></i><i class="crop br"></i>
+  </div>
+</section>
+
+<script>
+  document.getElementById('guides').addEventListener('change', (e) => {
+    document.body.classList.toggle('hide-guides', !e.target.checked);
+  });
+</script>
+</body>
+</html>

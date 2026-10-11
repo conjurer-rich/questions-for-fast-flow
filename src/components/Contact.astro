@@ -1,0 +1,34 @@
+---
+/** A subtle invitation to continue the conversation. */
+import { site } from '@/lib/site';
+interface Props { headingLevel?: 'h2' | 'h3' }
+const { headingLevel = 'h2' } = Astro.props;
+const Heading = headingLevel;
+const { contact, author } = site;
+const href = contact.email ? `mailto:${contact.email}?subject=${encodeURIComponent('A question worth exploring')}` : author.links.website.url;
+const label = contact.email ? 'Start a conversation' : `Get in touch via ${author.links.website.label}`;
+---
+<section class="contact" aria-labelledby="contact-heading">
+  <Heading id="contact-heading" class="contact__heading display">{contact.heading}</Heading>
+  <p class="contact__body">“{contact.body}”</p>
+  <p class="contact__action">
+    <a class="btn" href={href} rel={contact.email ? undefined : 'noopener'} data-track="contact" data-track-to={contact.email ? 'email' : 'richallen.info'}>
+      {label}
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+    </a>
+    <span class="contact__by">— {author.name}</span>
+  </p>
+</section>
+
+<style>
+  .contact {
+    padding: var(--space-4) 0;
+    border-top: 1px solid var(--rule);
+    display: grid; gap: var(--space-2);
+    max-width: var(--measure);
+  }
+  .contact__heading { font-size: var(--step-2); font-weight: 500; letter-spacing: -0.01em; line-height: 1.15; }
+  .contact__body { color: var(--ink-2); font-family: var(--serif); font-variation-settings: 'SOFT' 40; font-size: var(--step-1); line-height: 1.4; text-wrap: pretty; }
+  .contact__action { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-1); }
+  .contact__by { color: var(--ink-3); font-size: var(--step--1); }
+</style>

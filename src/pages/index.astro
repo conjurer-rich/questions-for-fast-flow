@@ -1,0 +1,82 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SiteHeader from '@/components/SiteHeader.astro';
+import SiteFooter from '@/components/SiteFooter.astro';
+import QuestionIndex from '@/components/QuestionIndex.astro';
+import About from '@/components/About.astro';
+import Contact from '@/components/Contact.astro';
+import { site } from '@/lib/site';
+import { getQuestions } from '@/lib/questions';
+
+const questions = await getQuestions();
+const count = questions.length;
+const countWord = ['zero','one','two','three','four','five','six','seven','eight','nine','ten'][count] ?? String(count);
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: site.name,
+  url: site.url,
+  description: site.description,
+  inLanguage: 'en-GB',
+  author: { '@type': 'Person', name: site.author.name, url: site.author.links.website.url },
+};
+---
+<BaseLayout title={site.name} description={site.description} path="/" schema={schema}>
+  <SiteHeader current="/">
+    <a class="header-link" href={`/${questions[0]?.id ?? ''}`}>Start with 01<span aria-hidden="true"> →</span></a>
+  </SiteHeader>
+
+  <main id="main">
+    <section class="hero wrap">
+      <p class="eyebrow reveal" style="--i:0">A collection of questions, by {site.author.name}</p>
+      <h1 class="hero__title display reveal" style="--i:1">Better <em>questions</em></h1>
+      <p class="hero__tagline serif reveal" style="--i:2">{site.tagline}</p>
+      <div class="hero__intro prose reveal" style="--i:3">
+        <p>Sometimes the most useful thing we can do is challenge the question we’re asking.</p>
+        <p>Explore {countWord} questions about how organisations work, how value flows, and what might be getting in the way.</p>
+      </div>
+    </section>
+
+    <section class="collection wrap" aria-labelledby="collection-heading">
+      <div class="collection__head reveal" style="--i:2">
+        <h2 id="collection-heading" class="eyebrow">The questions</h2>
+        <p class="collection__note">Each one stands on its own. Start wherever your attention lands.</p>
+      </div>
+      <QuestionIndex questions={questions} />
+    </section>
+
+    <section class="wrap wrap--narrow tail">
+      <About />
+      <Contact />
+    </section>
+  </main>
+
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .header-link { font-size: var(--step--1); font-weight: 500; text-decoration: none; color: var(--ink-2); white-space: nowrap; }
+  .header-link:hover { color: var(--ink); }
+
+  .hero { padding-block: var(--space-4) var(--space-5); display: grid; gap: var(--space-2); }
+  .hero__title { font-size: var(--step-5); line-height: 0.95; letter-spacing: -0.035em; margin-top: var(--space-1); }
+  .hero__title em { font-style: italic; font-weight: 300; }
+  .hero__tagline { font-size: var(--step-2); line-height: 1.2; color: var(--ink-2); letter-spacing: -0.01em; }
+  .hero__intro { margin-top: var(--space-2); font-size: var(--step-0); }
+  .hero__intro p { color: var(--ink-2); }
+
+  .collection { padding-bottom: var(--space-4); }
+  .collection__head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-2); flex-wrap: wrap; padding-bottom: var(--space-2); margin-bottom: var(--space-2); border-bottom: 1px solid var(--rule); }
+  .collection__note { color: var(--ink-3); font-size: var(--step--1); }
+
+  .tail { margin-top: var(--space-4); }
+
+  @media (min-width: 900px) {
+    .hero { grid-template-columns: 1.1fr 0.9fr; grid-template-rows: auto auto auto; column-gap: var(--space-5); align-items: end; padding-block: var(--space-5) var(--space-6); }
+    .hero > .eyebrow { grid-column: 1 / -1; }
+    .hero__title { grid-column: 1; grid-row: 2 / 4; }
+    .hero__tagline { grid-column: 2; grid-row: 2; align-self: end; }
+    .hero__intro { grid-column: 2; grid-row: 3; margin-top: 0; }
+  }
+</style>

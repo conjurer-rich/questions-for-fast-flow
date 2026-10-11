@@ -1,0 +1,82 @@
+---
+/**
+ * The homepage collection: an editorial index. Each row reads like a table of
+ * contents entry with a coloured spine, a large numeral, the category and the
+ * question. On wide screens the rows sit on a "card" surface with the numeral
+ * set off to the side.
+ */
+import { pad } from '@/lib/site';
+import type { Question } from '@/lib/questions';
+interface Props { questions: Question[] }
+const { questions } = Astro.props;
+---
+<ol role="list" class="index">
+  {questions.map((q, i) => (
+    <li class="index__item reveal" data-accent={q.data.accent} style={`--i:${i + 2}`}>
+      <a class="index__card" href={`/${q.id}`} data-track="question_open" data-track-to={q.id}>
+        <span class="index__spine" aria-hidden="true"></span>
+        <span class="index__num serif" aria-hidden="true">{pad(q.data.number)}</span>
+        <span class="index__body">
+          <span class="eyebrow"><span class="visually-hidden">Question </span><span class="num">{pad(q.data.number)}</span><span aria-hidden="true"> · </span>{q.data.category}</span>
+          <span class="index__question display">{q.data.question}</span>
+          <span class="index__idea">{q.data.coreIdea}</span>
+          <span class="index__cta arrow-link">Explore this question <span class="arrow" aria-hidden="true">→</span></span>
+        </span>
+      </a>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .index { display: grid; gap: var(--space-2); counter-reset: q; }
+  .index__card {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-2) var(--space-3);
+    align-items: start;
+    padding: var(--space-3) var(--space-3) var(--space-3) calc(var(--space-3) + 6px);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    text-decoration: none;
+    color: var(--ink);
+    overflow: hidden;
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .index__card:hover, .index__card:focus-visible {
+    transform: translateY(-3px);
+    border-color: color-mix(in oklab, var(--accent) 45%, var(--rule));
+    box-shadow: 0 1px 0 rgba(27,25,21,.06), 0 18px 40px -20px rgba(27,25,21,.45);
+  }
+  .index__card:focus-visible { outline-offset: 4px; }
+  .index__spine {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
+    background: var(--accent);
+  }
+  .index__num {
+    font-size: var(--step-4);
+    line-height: 0.9;
+    font-weight: 300;
+    color: var(--accent);
+    font-feature-settings: 'tnum';
+    letter-spacing: -0.04em;
+    padding-top: 0.1em;
+    min-width: 2.2ch;
+  }
+  .index__body { display: grid; gap: 0.6rem; min-width: 0; }
+  .index__question { font-size: var(--step-2); line-height: 1.12; }
+  .index__idea { color: var(--ink-2); font-size: var(--step--1); line-height: 1.55; max-width: 38rem; text-wrap: pretty; }
+  .index__cta { font-size: var(--step--1); color: var(--accent); margin-top: 0.25rem; }
+  .index__card:hover .arrow { transform: translateX(0.25em); }
+
+  @media (min-width: 720px) {
+    .index { gap: var(--space-3); }
+    .index__card { grid-template-columns: 6rem 1fr; padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) + 6px); }
+    .index__question { font-size: var(--step-3); }
+    /* Slight offset alternation so the list reads as a spread of cards, not a table. */
+    .index__item:nth-child(even) .index__card { margin-left: 4%; }
+    .index__item:nth-child(odd) .index__card { margin-right: 4%; }
+  }
+</style>

@@ -1,0 +1,15 @@
+---
+/** The wordmark: a small "question card" glyph and the site name. */
+import { site } from '@/lib/site';
+---
+<svg class="wordmark__mark" width="22" height="22" viewBox="0 0 22 22" aria-hidden="true" focusable="false">
+  <rect x="1.5" y="3.5" width="19" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+  <path d="M8.2 9.4c0-1.6 1.2-2.6 2.8-2.6s2.8 1 2.8 2.4c0 1.1-.6 1.7-1.5 2.2-.8.4-1 .7-1 1.4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+  <circle cx="11.3" cy="15.4" r="1" fill="currentColor" />
+</svg>
+<span class="wordmark__text">{site.name}</span>
+
+<style>
+  .wordmark__mark { flex: none; }
+  .wordmark__text { white-space: nowrap; }
+</style>

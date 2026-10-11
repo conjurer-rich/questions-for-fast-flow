@@ -1,0 +1,57 @@
+---
+/**
+ * Optional, privacy-conscious analytics. Renders nothing unless
+ * PUBLIC_ANALYTICS_PROVIDER is set to a supported provider and
+ * PUBLIC_ANALYTICS_ID is present. All supported providers run cookieless
+ * in their default configuration and do not require a consent banner for
+ * anonymous, aggregate measurement.
+ *
+ * Custom events (next-question clicks, outbound resource clicks) are sent
+ * through a tiny inline handler that reads data-track attributes, so the
+ * templates stay provider-agnostic.
+ */
+import { site } from '@/lib/site';
+
+const { provider, id, host } = site.analytics;
+const enabled = provider !== 'none' && id.length > 0;
+
+let scriptSrc = '';
+let attrs: Record<string, string> = {};
+let eventFn = ''; // JS expression that sends (name, props)
+
+if (enabled) {
+  if (provider === 'plausible') {
+    const origin = host || 'https://plausible.io';
+    scriptSrc = `${origin}/js/script.outbound-links.js`;
+    attrs = { 'data-domain': id };
+    eventFn = `function(n,p){window.plausible&&window.plausible(n,{props:p})}`;
+  } else if (provider === 'umami') {
+    const origin = host || 'https://cloud.umami.is';
+    scriptSrc = `${origin}/script.js`;
+    attrs = { 'data-website-id': id };
+    eventFn = `function(n,p){window.umami&&window.umami.track(n,p)}`;
+  } else if (provider === 'goatcounter') {
+    scriptSrc = 'https://gc.zgo.at/count.js';
+    attrs = { 'data-goatcounter': `https://${id}.goatcounter.com/count` };
+    eventFn = `function(n,p){window.goatcounter&&window.goatcounter.count({path:n+(p&&p.to?'/'+p.to:''),event:true})}`;
+  }
+}
+---
+{enabled && scriptSrc && (
+  <>
+    <script defer src={scriptSrc} {...attrs} is:inline></script>
+    <script is:inline define:vars={{ eventFn }}>
+      // Aggregate navigation + outbound clicks. No personal data is read or sent.
+      (function () {
+        var send = new Function('return ' + eventFn)();
+        document.addEventListener('click', function (e) {
+          var el = e.target && e.target.closest ? e.target.closest('[data-track]') : null;
+          if (!el) return;
+          var name = el.getAttribute('data-track');
+          var to = el.getAttribute('data-track-to') || el.getAttribute('href') || '';
+          try { send(name, { to: to, from: location.pathname }); } catch (_) {}
+        }, { passive: true });
+      })();
+    </script>
+  </>
+)}

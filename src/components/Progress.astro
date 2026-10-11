@@ -1,0 +1,52 @@
+---
+/**
+ * The five-question index shown in the header of each question page.
+ * Each mark is a link, so it doubles as navigation. The current question is
+ * filled; others are outlined. Works without JavaScript.
+ */
+import { pad } from '@/lib/site';
+import type { Question } from '@/lib/questions';
+interface Props { questions: Question[]; currentId: string }
+const { questions, currentId } = Astro.props;
+---
+<nav class="progress" aria-label="Questions in this collection">
+  <ol role="list" class="progress__list">
+    {questions.map((q) => {
+      const isCurrent = q.id === currentId;
+      return (
+        <li data-accent={q.data.accent}>
+          <a
+            href={`/${q.id}`}
+            class:list={['progress__dot', { 'is-current': isCurrent }]}
+            aria-current={isCurrent ? 'page' : undefined}
+            aria-label={`Question ${pad(q.data.number)}, ${q.data.category}: ${q.data.question}`}
+            title={`${pad(q.data.number)} — ${q.data.category}`}
+          >
+            <span class="progress__num" aria-hidden="true">{pad(q.data.number)}</span>
+          </a>
+        </li>
+      );
+    })}
+  </ol>
+</nav>
+
+<style>
+  .progress__list { display: flex; gap: 0.4rem; }
+  .progress__dot {
+    display: grid; place-items: center;
+    width: 2rem; height: 2rem;
+    border-radius: 999px;
+    border: 1px solid var(--rule-strong);
+    color: var(--ink-3);
+    text-decoration: none;
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.02em;
+    font-feature-settings: 'tnum';
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease), transform var(--dur) var(--ease);
+  }
+  .progress__dot:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+  .progress__dot.is-current { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+  @media (max-width: 420px) {
+    .progress__dot { width: 1.75rem; height: 1.75rem; font-size: 0.62rem; }
+    .progress__list { gap: 0.3rem; }
+  }
+</style>

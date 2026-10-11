@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://questions.richallen.info/sitemap-index.xml
